@@ -1528,6 +1528,12 @@ World::pointDistanceToBody(position p, Body *b, vec3 *normal)
   return cp - p;
 }
 
+bool
+World::isPointInBodyOfWorld(position p, Body *b)
+{
+  return mCollisionInterface->isPointInBody(b, p);
+}
+
 /*! Returns the distance between two bodies \a b1 and \a b2
   Deprecated by version below which runs of more general world elements
 */

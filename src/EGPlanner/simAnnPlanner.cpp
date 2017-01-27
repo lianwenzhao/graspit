@@ -117,7 +117,14 @@ SimAnnPlanner::mainLoop()
     return;
   }
   DBGP("Sim Ann success");
-
+//  printf("!!!In sim ann, dof is %d %g %g %g %g!!!\n", mCurrentState->getNumVariables(),
+//  mCurrentState->getVariable(0)->getValue(), mCurrentState->getVariable(1)->getValue(),
+//  mCurrentState->getVariable(2)->getValue(), mCurrentState->getVariable(3)->getValue());
+//
+//  printf("!!!In sim ann, dof is %d %d %d %d %d!!!\n", mCurrentState->getNumVariables(),
+//  mCurrentState->getVariable(0)->isFixed(), mCurrentState->getVariable(1)->isFixed(),
+//  mCurrentState->getVariable(2)->isFixed(), mCurrentState->getVariable(3)->isFixed());
+//
   //put result in list if there's room or it's better than the worst solution so far
   double worstEnergy;
   if ((int)mBestList.size() < BEST_LIST_SIZE) { worstEnergy = 1.0e5; }
@@ -126,6 +133,8 @@ SimAnnPlanner::mainLoop()
     GraspPlanningState *insertState = new GraspPlanningState(mCurrentState);
     //but check if a similar solution is already in there
     if (!addToListOfUniqueSolutions(insertState, &mBestList, 0.2)) {
+      //printf("!!!In sim ann, saved dof is %d %d %g!!!\n", insertState->getNumVariables(),
+      //insertState->getVariable(0)->isFixed(), insertState->getVariable(0)->getValue());
       delete insertState;
     } else {
       mBestList.sort(GraspPlanningState::compareStates);

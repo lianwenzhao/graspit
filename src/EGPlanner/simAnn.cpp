@@ -275,7 +275,7 @@ SimAnn::variableNeighbor(VariableSet *set, double T, VariableSet *target)
       if (v < var->mMinVal && v - var->mMinVal > -TINY) { v = var->mMinVal; }
 
       if (loop == 100) {
-        DBGA("value: " << var->getValue() << " Mj: " << var->mMaxJump);
+        DBGA("var " <<i<< "value: " << var->getValue() << " Mj: " << var->mMaxJump);
         DBGA("min val: " << var->mMinVal << " max val: " << var->mMaxVal);
         if (target->getVariable(i)->isFixed()) {
           DBGA("Target: " << tv << "; Nbr: " << biasedNeighborDistribution(T, tv - var->getValue(), conf));

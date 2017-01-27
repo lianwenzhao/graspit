@@ -455,6 +455,22 @@ GraspitCollision::pointToBodyDistance(const Body *body1, position point,
   return pc.getMin();
 }
 
+bool
+GraspitCollision::isPointInBody(const Body *body1, position point)
+{
+  CollisionModel *model = getModel(body1);
+  if (!model) {
+    DBGA("GCOL: model not found");
+    return 0;
+  }
+  //this callback operates in body coordinates
+  ClosestPtCallback pc(model, point * body1->getTran().inverse());
+  const Node *node1 = model->getRoot(), *node2 = NULL;
+  double dist = pc.quickTest(node1, node2);
+  //printf("!!!In isPointInBody, distance is %g !!!\n", dist);
+  return (dist<1e-5);
+}
+
 double
 GraspitCollision::bodyToBodyDistance(const Body *body1, const Body *body2,
                                      position &p1, position &p2)

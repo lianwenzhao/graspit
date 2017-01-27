@@ -86,11 +86,13 @@ void PostureStateEigen::getHandDOF(double *dof) const
   for (int i = 0; i < mHand->getEigenGrasps()->getSize(); i++) {
     eg[i] = readVariable(i);
   }
+  //printf("!!!In getHandDOF, eg is %g!!!\n", eg[0]);
   bool r = mHand->getEigenGrasps()->isRigid();
   mHand->getEigenGrasps()->setRigid(true);
   mHand->getEigenGrasps()->getDOF(eg, dof);
   mHand->checkSetDOFVals(dof);
   mHand->getEigenGrasps()->setRigid(r);
+  //printf("!!!In getHandDOF, dof is %g!!!\n", dof[0]);
   delete [] eg;
 }
 void PostureStateEigen::storeHandDOF(const double *dof)

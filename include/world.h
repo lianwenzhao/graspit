@@ -483,6 +483,9 @@ class World : public QObject {
     //! Computes the distance between a point and a body
     vec3 pointDistanceToBody(position p, Body *b, vec3 *normal = NULL);
 
+    //! Check whether a point is inside the body; return 1 if it is.
+    bool isPointInBodyOfWorld(position p, Body *b);
+
     //! Adds back to the scene graph an element that has been removed
     void addElementToSceneGraph(WorldElement *e);
     //! Removes from the scene graph an element that is already part of this world

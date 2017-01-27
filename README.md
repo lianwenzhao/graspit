@@ -7,6 +7,12 @@ Introduction
 Please see the User Manual found at http://graspit-simulator.github.io/ for an introduction to GraspIt!, a list of
 features, installation instructions, getting started examples, etc.
 
+
+Dependency
+----------
+GSL-GNU Scientific Library; for the use of random sampling
+https://www.gnu.org/software/gsl/
+
 Distribution Contents
 ---------------------
 

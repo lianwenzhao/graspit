@@ -100,6 +100,9 @@ class GraspitCollision : public CollisionInterface
     virtual int contact(ContactReport *report, double threshold,
                         const Body *body1, const Body *body2);
 
+    // return 1 if point is inside body, 0 otherwise
+    virtual bool isPointInBody(const Body *body1, position point);
+
     //point-to-body and body-to-body distances
     virtual double pointToBodyDistance(const Body *body1, position point,
                                        position &closestPoint, vec3 &closestNormal);

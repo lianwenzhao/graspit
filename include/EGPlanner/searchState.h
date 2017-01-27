@@ -27,6 +27,7 @@
 #define _HandObjectState_h_
 
 #include <vector>
+#include <map>
 #include <list>
 #include <QString>
 
@@ -154,6 +155,8 @@ class VariableSet
 
     void setAllConfidences(double c);
     void setAllFixed(bool f);
+
+    void setVariables(std::map<QString, std::pair<double, bool> > name_values);
 
     void writeToFile(FILE *fp) const;
     bool readFromFile(FILE *fp);

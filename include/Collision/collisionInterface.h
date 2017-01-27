@@ -149,6 +149,9 @@ class CollisionInterface
     virtual int contact(ContactReport *report, double threshold,
                         const Body *body1, const Body *body2) = 0;
 
+    //! Checks whether a given point is inside the body (bounding box)
+    virtual bool isPointInBody(const Body *body1, position point) = 0;
+
     /*! Distance from a point \a point specified in world coordinates to a body.
       On exit, \a closestPoint is the point on the body that is closest to the given
       point, and \a closestNormal is the body normal at that point. Both \a closestPoint

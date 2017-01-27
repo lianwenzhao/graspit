@@ -29,6 +29,9 @@
 #include <ostream>
 #include <list>
 #include <QObject>
+#include <algorithm>
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
 
 #include "search.h"
 #include "matvec3D.h"
@@ -57,6 +60,7 @@ class SearchEnergy : public QObject
     const std::list<GraspPlanningState *> *mAvoidList;
     double mThreshold;
 
+    gsl_rng* rand_seed; 
     /*! If this flag is set, the hand is disconnected from the scene graph while
         the calculator does energy computations */
     bool mDisableRendering;
@@ -85,6 +89,9 @@ class SearchEnergy : public QObject
     void setContactType(SearchContactType t) {mContactType = t;}
     double getEpsQual();
     double getVolQual();
+
+    // Check whether this hand encloses the object
+    bool isEnclosed();
 
     void setThreshold(double t) {mThreshold = t;}
     void setAvoidList(const std::list<GraspPlanningState *> *l) {mAvoidList = l;}

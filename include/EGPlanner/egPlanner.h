@@ -188,6 +188,9 @@ class EGPlanner : public QThread
     //! Get the current state of the planner (ready, running, etc.). Thread-safe.
     PlannerState getState();
 
+    //! Get current GraspPlanningState
+    const GraspPlanningState * getCurrentGPS(){return mCurrentState;}
+
     //! Convenience function; return whether current state is RUNNING or not
     virtual bool isActive() {return getState() == RUNNING;}
     //! Convenience function; return whether current state is READY or not

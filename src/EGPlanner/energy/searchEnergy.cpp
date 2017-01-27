@@ -32,6 +32,7 @@
 #include "body.h"
 #include "grasp.h"
 #include "contact/contact.h"
+#include "contact/virtualContact.h"
 #include "world.h"
 #include "quality.h"
 #include "searchState.h"
@@ -71,6 +72,12 @@ SearchEnergy::SearchEnergy()
   mOut = NULL;
   mThreshold = 0;
   mAvoidList = NULL;
+
+  //random generator; for dirichlet samples
+  const gsl_rng_type* T; 
+  gsl_rng_env_setup(); 
+  T = gsl_rng_default; 
+  rand_seed = gsl_rng_alloc(T);
 }
 
 void
@@ -85,8 +92,7 @@ SearchEnergy::createQualityMeasures()
 
 void
 SearchEnergy::setHandAndObject(Hand *h, Body *o)
-{
-  if (mHand != h) {
+{ if (mHand != h) {
     mHand = h;
     createQualityMeasures();
   }
@@ -97,6 +103,58 @@ SearchEnergy::~SearchEnergy()
 {
   if (mVolQual) { delete mVolQual; }
   if (mEpsQual) { delete mEpsQual; }
+}
+
+//For all points sampled in the convex hull of the virtual contacts,
+//check whether it is inside the object
+//First can check whether 000 is inside the body??
+bool
+SearchEnergy::isEnclosed()
+{
+  double ratio = 0.1;
+
+  if (mContactType == CONTACT_LIVE && mType != ENERGY_AUTOGRASP_QUALITY && mType !=
+      ENERGY_STRICT_AUTOGRASP){
+    mHand->getWorld()->findVirtualContacts(mHand, mObject);
+    DBGP("Live contacts computation");
+  }
+
+  mHand->getGrasp()->collectVirtualContacts();
+  int num_contact = mHand->getGrasp()->getNumContacts();
+
+  VirtualContact *contact;
+  int num_inside = 0;
+  int num_sample = 100;
+  double pos_sample[3];
+  double pos_tmp[3];
+  double alpha[num_contact];
+  std::fill_n(alpha, num_contact, 1);
+  double weight[num_contact];
+  position loc_tmp;
+
+  for (int i = 0; i < num_sample; i++){
+
+    gsl_ran_dirichlet(rand_seed, num_contact, alpha, weight);
+
+    for (int k = 0; k < 3; k++){
+	pos_sample[k] = 0.0;
+    }
+    for (int j = 0; j < num_contact; j++){
+      contact = (VirtualContact *)mHand->getGrasp()->getContact(j);
+      contact->getWorldLocation().get(pos_tmp);
+      for (int k = 0; k < 3; k++){
+	pos_sample[k] += pos_tmp[k] * weight[j];
+      }
+    }
+
+    loc_tmp.set(pos_sample[0], pos_sample[1], pos_sample[2]);
+    if (mObject->getWorld()->isPointInBodyOfWorld(loc_tmp, mObject)){
+        num_inside ++;
+    }
+  }
+
+  //printf("!!!Number of inside is %d!!!\n", num_inside);
+  return (num_inside > ratio * num_sample);
 }
 
 bool
@@ -168,7 +226,8 @@ void SearchEnergy::analyzeState(bool &isLegal, double &stateEnergy, const GraspP
     h->setRenderGeometry(false);
   }
 
-  if (!state->execute() || !legal()) {
+  //printf("!!!checking inside!!!\n");
+  if (!state->execute() || !legal()){// || !isEnclosed()) {
     isLegal = false;
     stateEnergy = 0;
   } else {

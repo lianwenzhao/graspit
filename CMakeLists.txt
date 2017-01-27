@@ -691,6 +691,7 @@ set (GRASPIT_INCLUDES
 include_directories(
     ${GRASPIT_INCLUDES}
     ${TINYXML_INCLUDES}
+    /usr/local/include
 )
 
 
@@ -699,7 +700,7 @@ include_directories(
 ############
 
 add_definitions(${GRASPIT_DEFINES} ${SOQT_CXXFLAGS} ${LAPACK_LINKER_FLAGS} -g)
-link_directories(${SOQT_LINK_DIRS} ${QT_LIBRARY_DIR})
+link_directories(${SOQT_LINK_DIRS} ${QT_LIBRARY_DIR} /usr/local/lib)
 
 set (GRASPIT_LIBRARY_SOURCES
     ${GRASPIT_CORE_SOURCES}
@@ -733,6 +734,7 @@ set(SIMULATOR_SRC ${GSRC}/src/main.cpp)
 add_executable(graspit_simulator ${SIMULATOR_SRC})
 
 ## System libraries which are needed for graspit
+set(GSL libgsl.so libgslcblas.so)
 set(GRASPIT_LINK_LIBRARIES
    ${QT_LIBRARIES}
    ${QT_QT3SUPPORT_LIBRARY}
@@ -740,6 +742,7 @@ set(GRASPIT_LINK_LIBRARIES
    ${SOQT_LIBRARY}
    ${LAPACK_LIBRARIES}
    ${BULLET_LIBRARIES}
+   ${GSL}
 )
 
 ## ---

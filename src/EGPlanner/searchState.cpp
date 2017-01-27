@@ -122,6 +122,23 @@ VariableSet::setAllFixed(bool f)
   }
 }
 
+void
+VariableSet::setVariables(std::map<QString, std::pair<double, bool> > name_values)
+{
+  std::map<QString, std::pair<double, bool> >::iterator it = name_values.begin();
+  while (it != name_values.end()){
+    for (int j=0; j<mVariables.size(); j++){
+      if (it->first == mVariables[j]->getName()){
+        mVariables[j]->setValue(it->second.first);
+	mVariables[j]->setFixed(it->second.second);
+	continue;
+      }
+    }
+    it++;
+  }
+}
+
+
 int
 VariableSet::getNumUsedVariables() const
 {
@@ -361,6 +378,7 @@ HandObjectState::HandObjectState(Hand *h):
   mRefTran(transf::IDENTITY),
   mTargetObject(NULL),
   mPosture(PostureState::createInstance(POSE_EIGEN, h)),
+  //mPosition(PositionState::createInstance(SPACE_AXIS_ANGLE, h)),
   mPosition(PositionState::createInstance(SPACE_COMPLETE, h)),
   mAttributes(new AttributeSet(h)),
   IVRoot(NULL),
@@ -520,6 +538,11 @@ bool HandObjectState::execute(Hand *h) const
   if (h->setTran(mPosition->getCoreTran() * mRefTran) == FAILURE) { return false; }
   double *dof = new double[ h->getNumDOF() ];
   mPosture->getHandDOF(dof);
+ // printf("!!!in execute, hand Tx is %g Ty is %g Tz is %g\n!!!",
+ // h->getTran().translation().x()/1000.0,
+ // h->getTran().translation().y()/1000.0,
+ // h->getTran().translation().z()/1000.0);
+  //printf("!!! in execute, hand dof is %g!!!\n", dof[0]);
   //DBGP("Dof: " << dof[0] << " " << dof[1] << " " << dof[2] << " " << dof[3]);
   h->forceDOFVals(dof);
   delete [] dof;
