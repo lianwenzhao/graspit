@@ -27,8 +27,8 @@
             <d>d0*-1</d>
             <a>0</a>
             <alpha>0</alpha>
-            <minValue>-0</minValue>
-            <maxValue>-20.833</maxValue>
+            <minValue>-20.833</minValue>
+            <maxValue>-0</maxValue>
             <viscousFriction>5.0e+7</viscousFriction>
         </joint>
         <link dynamicJointType='Prismatic'>r_gripper_l_finger.xml</link>
@@ -40,11 +40,11 @@
         </transform>
         <joint type='Prismatic'>
             <theta>0</theta>
-            <d> d0</d>
+            <d>d0</d>
             <a>0</a>
             <alpha>0</alpha>
-            <minValue>20.833</minValue>
-            <maxValue>-0</maxValue>
+            <minValue>-0</minValue>
+            <maxValue>20.833</maxValue>
             <viscousFriction>5.0e+7</viscousFriction>
         </joint>
         <link dynamicJointType='Prismatic'>r_gripper_r_finger.xml</link>
@@ -53,6 +53,6 @@
       <referenceLocation>0 0 170</referenceLocation>
       <direction>0 0 1</direction>
     </approachDirection>
-    <eigenGrasps>eigen/eigen.xml</eigenGrasps>
+    <eigenGrasps>eigen/baxter_eigen.xml</eigenGrasps>
     <virtualContacts>virtual/contacts.vgr</virtualContacts>
 </robot>
