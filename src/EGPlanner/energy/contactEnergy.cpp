@@ -89,19 +89,19 @@ double ContactEnergy::energy() const
   std::fill_n(alpha, num_contact, 1);
   double weight[num_contact];
   position loc_tmp;
-
+ 
   for (int i = 0; i < num_sample; i++){
 
     gsl_ran_dirichlet(rand_seed, num_contact, alpha, weight);
 
     for (int k = 0; k < 3; k++){
-  pos_sample[k] = 0.0;
+      pos_sample[k] = 0.0;
     }
     for (int j = 0; j < num_contact; j++){
       contact = (VirtualContact *)mHand->getGrasp()->getContact(j);
       contact->getWorldLocation().get(pos_tmp);
       for (int k = 0; k < 3; k++){
-  pos_sample[k] += pos_tmp[k] * weight[j];
+        pos_sample[k] += pos_tmp[k] * weight[j];
       }
     }
 
@@ -112,7 +112,11 @@ double ContactEnergy::energy() const
   }
   double ratio_test = double(num_inside) / num_sample;
   // End checking inside
- 
+
+  // get center of mass in world coordinate
+  position cog = mHand->getGrasp()->getObject()->getCoG()* mHand->getGrasp()->getObject()->getTran();  
+  double dist_to_cog = 0.0;
+
   vec3 p, n, cn;
   double totalError = 0;
   for (int i = 0; i < mHand->getGrasp()->getNumContacts(); i++)
@@ -120,6 +124,10 @@ double ContactEnergy::energy() const
     contact = (VirtualContact *)mHand->getGrasp()->getContact(i);
     contact->getObjectDistanceAndNormal(mObject, &p, NULL);
     double dist = p.len();
+
+    contact->getWorldLocation().get(pos_tmp);
+    dist_to_cog += sqrt(pow(cog.x() - pos_tmp[0], 2) + pow(cog.y() - pos_tmp[1], 2) +
+                        pow(cog.z() - pos_tmp[2], 2));
  
     //this should never happen anymore since we're never inside the object
     //if ( (-1.0 * p) % n < 0) dist = -dist;
@@ -140,8 +148,12 @@ double ContactEnergy::energy() const
   }
  
   totalError /= mHand->getGrasp()->getNumContacts();
+  dist_to_cog /= mHand->getGrasp()->getNumContacts();
  
   //DBGP("Contact energy: " << totalError);
   //return totalError;
-  return totalError - ratio_test * 100;
+
+  //printf("totalError: %g, dist_to_cog: %g, ratio_test: %g\n", totalError, dist_to_cog, ratio_test);
+  return totalError + dist_to_cog * 0.1 - ratio_test * 100;
+
 } 
